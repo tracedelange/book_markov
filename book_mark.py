@@ -4,9 +4,7 @@ import pandas as pd
 from exclude import bad_ends
 import tweepy
 from os import environ
-
-#from secret import secret
-
+from markov_functions import set_up, make_pairs, make_dict, generate, author_gen, book_gen
 
 CONSUMER_KEY = environ['CONSUMER_KEY']
 CONSUMER_SECRET = environ['CONSUMER_SECRET']
@@ -20,71 +18,43 @@ auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
 # Create API object
 api = tweepy.API(auth)
 
-#Open and read corpus
+#Open and read book title doc and make unspilt corpus
 books = open('book_titles.txt','r')
-unsplit_corpus = books.readlines()
+unsplit_book_corpus = books.readlines()
 books.close()
 
-#Process corpus from 'book_titles.txt'
-def set_up(unsplit_corpus):
-    corpus = []
-    for entry in unsplit_corpus:
-        corpus.append(entry.split(' '))
-    final_corpus = []
-    for entry in corpus:
-        for item in entry:
-            final_corpus.append(item.strip('(').strip(')'))
-    return final_corpus
+#open and read author doc and make unspilt corpus
+names = open('authors.txt','r')
+unsplit_author_corpus = names.readlines()
+names.close()
 
-def make_pairs(corpus):
-    
-    for i in range(len(corpus) -1):
-        yield (corpus[i], corpus[i + 1])
+#Open and read noun list and make a list of entries
+nouns = open('nouns.txt','r')
+noun_list = nouns.readlines()
+nouns.close()
 
-def generate(corpus, dic, words):
-    first_word = np.random.choice(corpus)
-    
-    while first_word.islower() or first_word[-1][-1] == '\n' or first_word[-1][-1] == '?' or first_word == ':' or first_word == ' ':
-        first_word = np.random.choice(corpus)
+#format unsplit corpus's with set_up()
+book_corpus = set_up(unsplit_book_corpus)
+author_corpus = set_up(unsplit_author_corpus)
 
-    chain = [first_word]
-    
-    ending_word = False
-    
-    while ending_word == False:
-        word = np.random.choice(word_dict[chain[-1]])
-        if len(chain) > words:
-            ending_word = True
-        else:
-            chain.append(word)
-            
-    return chain
+#Generate pairs
+book_pairs = make_pairs(book_corpus)
+author_pairs = make_pairs(author_corpus)
 
-def book_gen(final_corpus, word_dict):
-    
-    title = generate(final_corpus, word_dict, 6)
-    
-    if title[-1] in bad_ends:
-        del title[-1]
-    b = ' '.join(title)
-    book = b.replace('\n','').replace(')','')
-    if book[-1] == ':' or book[-1] == ',':
-        book = book[:-1]
-    return book
+#Generate dictionaries 
+book_word_dict = make_dict(book_pairs)
+author_word_dict = make_dict(author_pairs)
 
-corpus = set_up(unsplit_corpus)
+#Generate markov list model for authors
+author = generate(author_corpus, author_word_dict, 2)
 
-pairs = make_pairs(set_up(unsplit_corpus))
+#format author list model into final string
+final_author = author_gen(author)
 
-word_dict = {}
+#generate final book title
+final_book = book_gen(book_corpus, book_word_dict)
 
-for word_1, word_2 in pairs:
-    if word_1 in word_dict.keys():
-        word_dict[word_1].append(word_2)
-    else:
-        word_dict[word_1] = [word_2]
-        
-tweet = str(book_gen(corpus, word_dict))
+tweet = (final_book + '\nBy ' + final_author)
 
 print(tweet)
 

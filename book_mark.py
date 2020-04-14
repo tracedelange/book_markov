@@ -6,10 +6,17 @@ import tweepy
 from os import environ
 
 
+from os import environ
+ACCESS_KEY = environ['ACCESS_KEY']
 CONSUMER_KEY = environ['CONSUMER_KEY']
 CONSUMER_SECRET = environ['CONSUMER_SECRET']
-ACCESS_KEY = environ['ACCESS_KEY']
+
 ACCESS_SECRET = environ['ACCESS_SECRET']
+
+
+
+print(CONSUMER_KEY)
+print(ACCESS_KEY)
 
 # Authenticate to Twitter
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
@@ -85,6 +92,6 @@ for word_1, word_2 in pairs:
 
 print(book_gen(corpus, word_dict))
 
-tweet = book_gen(corpus, word_dict)
+tweet = str(book_gen(corpus, word_dict))
 
 api.update_status(tweet)

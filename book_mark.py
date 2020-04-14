@@ -5,18 +5,13 @@ from exclude import bad_ends
 import tweepy
 from os import environ
 
+#from secret import secret
 
-from os import environ
-ACCESS_KEY = environ['ACCESS_KEY']
+
 CONSUMER_KEY = environ['CONSUMER_KEY']
 CONSUMER_SECRET = environ['CONSUMER_SECRET']
-
+ACCESS_KEY = environ['ACCESS_KEY']
 ACCESS_SECRET = environ['ACCESS_SECRET']
-
-
-
-print(CONSUMER_KEY)
-print(ACCESS_KEY)
 
 # Authenticate to Twitter
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
@@ -67,7 +62,7 @@ def generate(corpus, dic, words):
 
 def book_gen(final_corpus, word_dict):
     
-    title = generate(final_corpus, word_dict, 7)
+    title = generate(final_corpus, word_dict, 6)
     
     if title[-1] in bad_ends:
         del title[-1]
@@ -89,9 +84,12 @@ for word_1, word_2 in pairs:
     else:
         word_dict[word_1] = [word_2]
         
-
-print(book_gen(corpus, word_dict))
-
 tweet = str(book_gen(corpus, word_dict))
 
-api.update_status(tweet)
+print(tweet)
+
+try:
+	api.update_status(tweet)
+	print('Tweet Sent')
+except TweepyError:
+	print('Could not Tweet')

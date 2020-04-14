@@ -7,8 +7,6 @@ verify_ssl = true
 
 [packages]
 tweepy = "*"
-environ = "*"
-numpy = "*"
 
 [requires]
 python_version = "3.7"

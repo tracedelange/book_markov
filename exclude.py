@@ -23,5 +23,6 @@ bad_ends = [
         'Her',
         'how',
         'How',
-        'IN'
+        'IN',
+        'THE'
     ]

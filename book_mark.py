@@ -2,6 +2,21 @@ import random as rm
 import numpy as np
 import pandas as pd
 from exclude import bad_ends
+import tweepy
+from os import environ
+
+
+CONSUMER_KEY = environ['CONSUMER_KEY']
+CONSUMER_SECRET = environ['CONSUMER_SECRET']
+ACCESS_KEY = environ['ACCESS_KEY']
+ACCESS_SECRET = environ['ACCESS_SECRET']
+
+# Authenticate to Twitter
+auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
+auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
+
+# Create API object
+api = tweepy.API(auth)
 
 #Open and read corpus
 books = open('book_titles.txt','r')
@@ -69,3 +84,7 @@ for word_1, word_2 in pairs:
         
 
 print(book_gen(corpus, word_dict))
+
+tweet = book_gen(corpus, word_dict)
+
+api.update_status(tweet)

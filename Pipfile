@@ -10,7 +10,6 @@ tweepy = "*"
 environ = "*"
 numpy = "*"
 pandas = "*"
-random = "*"
 
 [requires]
 python_version = "3.7"
